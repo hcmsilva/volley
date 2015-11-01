@@ -95,6 +95,15 @@ public interface Cache {
         public boolean refreshNeeded() {
             return this.softTtl < System.currentTimeMillis();
         }
+
+        /**
+         * True if server 'comes from the future'.
+         * Probably wrong local system time causes cache entries to becomes hits
+         * until System.currentTimeMillis() catches up to the serverDate+ttl.
+         */
+        public boolean isInvalid() {
+            return this.serverDate > System.currentTimeMillis();
+        }
     }
 
 }
