@@ -112,4 +112,27 @@ public class CacheDispatcherTest {
         Request request = mNetworkQueue.take();
         assertSame(entry, request.getCacheEntry());
     }
+
+
+    // An invalid cache hit does not post a response and queues to the network.
+    @Test public void invalidCacheHit() throws Exception {
+        Cache.Entry entry = CacheTestUtils.makeRandomCacheEntry(true);
+        mCache.setEntryToReturn(entry);
+        mCacheQueue.add(mRequest);
+        mCacheQueue.waitUntilEmpty(TIMEOUT_MILLIS);
+        assertFalse(mDelivery.wasEitherResponseCalled());
+        assertTrue(mNetworkQueue.size() > 0);
+        Request request = mNetworkQueue.take();
+        assertSame(entry, request.getCacheEntry());
+    }
+
+    // A valid cache hit posts a response and does not queue to the network.
+    @Test public void validCacheHit() throws Exception {
+        Cache.Entry entry = CacheTestUtils.makeRandomCacheEntry(false);
+        mCache.setEntryToReturn(entry);
+        mCacheQueue.add(mRequest);
+        mCacheQueue.waitUntilEmpty(TIMEOUT_MILLIS);
+        assertTrue(mDelivery.postResponse_called);
+        assertFalse(mDelivery.postError_called);
+    }
 }

@@ -37,4 +37,14 @@ public class CacheTestUtils {
     public static Cache.Entry makeRandomCacheEntry(byte[] data) {
         return makeRandomCacheEntry(data, false, false);
     }
+
+    /**
+     * Like {@link #makeRandomCacheEntry(byte[], boolean, boolean)} but
+     * defaults to an unexpired entry.
+     */
+    public static Cache.Entry makeRandomCacheEntry(boolean isInvalid) {
+        Cache.Entry entry = makeRandomCacheEntry(null, false, false);
+        entry.serverDate = isInvalid ? Long.MAX_VALUE : 0;
+        return entry;
+    }
 }
